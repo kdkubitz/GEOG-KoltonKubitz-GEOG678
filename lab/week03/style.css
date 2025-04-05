@@ -1,0 +1,39 @@
+
+* {
+    font-family: monospace;
+    background-color: floralwhite;
+    margin: 20px 60px;
+}
+h1 {
+    font-family: courier;
+    text-align: center;
+}
+h2 {
+    text-align: center;
+    color: gray;
+}
+h3 {
+    font-family: courier;
+    color: brown;
+}
+h4 {
+    margin-bottom: 10px
+}
+h5 {
+    
+    text-align: center;
+    font-family: courier;
+    color: brown
+}
+p {}
+ul {}
+li {}
+hr {
+    border: 2px solid brown;
+    width: 100%;
+    height: 1px;
+    margin: 10px;
+}
+a {
+    align-items: center;
+}
