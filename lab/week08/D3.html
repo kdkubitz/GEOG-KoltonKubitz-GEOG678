@@ -1,79 +1,94 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html>
 
     <head>
 
         <title>K. Kubitz D3</title>
-        <script src="https://d3js.org/d3.v4.min.js" type="text/JavaScript"></script>
-        <style>
-            #chart div{
-                font: 10px sans-serif;
-                background-color: steelblue;
-                text-align: right;
-                padding: 3px;
-                margin: 1px;
-                color: white;
-            }
-        </style>
-
+        <!-- load d3 source scripts -->
+        <script src="https://d3js.org/d3.v4.min.js"></script> 
+    
     </head>
-
+    
     <body>
 
         <div id="chart"></div>
-
+    
         <script>
 
-            var margin = {top: 10, right: 30, bottom: 30, left: 60},
-                width = 460 - margin.left - margin.right,
-                height = 400 - margin.top - margin.bottom;
+            // add data
+            const data = [
+                { day: "Sat", high: 82, low: 67 },
+                { day: "Sun", high: 81, low: 59 },
+                { day: "Mon", high: 81, low: 50 },
+                { day: "Tue", high: 70, low: 47 },
+                { day: "Wed", high: 77, low: 51 },
+                { day: "Thu", high: 78, low: 60 },
+                { day: "Fri", high: 79, low: 66 },
+                { day: "SaT", high: 80, low: 66 },
+            ]
 
-            var svg = d3.select("#chart")
+            // set up margins
+            const margin = { top: 20, right: 30, bottom: 30, left: 50 };
+            const width = 600 - margin.left - margin.right;
+            const height = 400 - margin.top - margin.bottom;
+
+            // initialize svg
+            const svg = d3.select("body")
                 .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
                 .append("g")
-                .attr("transform", 
-                      "translate(" + margin.left + "," + margin.top + ")");
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-            var highTemp = [82, 81, 81, 70, 77, 78, 79, 80];
+            // use scalePoint for x
+            const x = d3.scalePoint()
+                .domain(data.map(d => d.day))
+                .range([0, width]);
+            
+            // use scaleLinear for y
+            const y = d3.scaleLinear()
+                .domain([d3.min(data, d => d.low) - 5, d3.max(data, d => d.high) + 5])
+                .range([height, 0]);
 
-            var lowTemp = [67, 59, 50, 47, 51, 60, 66, 66]
+            // set up lineHigh
+            const lineHigh = d3.line()
+                .x(d => x(d.day))
+                .y(d => y(d.high));
+            
+            // set up lineLow
+            const lineLow = d3.line()
+                .x(d => x(d.day))
+                .y(d => y(d.low));
 
-            d3.svg(function(d){
-                return { date : d3.timeParse("%Y-%m-%d")(d.date), value : d.value }
-            },
+            console.log(x.domain());
+            console.log(y.domain());
+            console.log(data);
+            
+            // draw x axis
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+            
+            // draw y axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
 
-            function(highTemp) {
+            // draw lineHigh
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "red")
+                .attr("stroke-width", 2)
+                .attr("d", lineHigh);
 
-                // Add X axis --> it is a date format
-                var x = d3.scaleTime()
-                    .domain(d3.extent(highTemp, function(d) { return d.date; }))
-                    .range([ 0, width ]);
-                svg.append("g")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x));
-
-                // Add Y axis
-                var y = d3.scaleLinear()
-                    .domain([0, d3.max(highTemp, function(d) { return +d.value; })])
-                    .range([ height, 0 ]);
-                svg.append("g")
-                    .call(d3.axisLeft(y));
-
-                // Add the line
-                svg.append("path")
-                    .datum(highTemp)
-                    .attr("fill", "none")
-                    .attr("stroke", "steelblue")
-                    .attr("stroke-width", 1.5)
-                    .attr("d", d3.line()
-                        .x(function(d) { return x(d.date) })
-                        .y(function(d) { return y(d.value) })
-                    );
-
-            })
+            // draw lineLow
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "blue")
+                .attr("stroke-width", 2)
+                .attr("d", lineLow);
 
         </script>
 
